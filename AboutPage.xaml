@@ -1,0 +1,33 @@
+﻿<Page
+    x:Class="SudokuApp.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SudokuApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Image Source="Assets/SudokuBackground3.jpg" Stretch="Fill">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="720" />
+                        </VisualState.StateTriggers>
+
+                        <VisualState.Setters>
+                            <Setter Target="myPanel.Orientation"
+                                Value="Horizontal" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Image>
+        <StackPanel x:Name="aboutPanel" Orientation="Vertical">
+            <TextBlock x:Name="titleTextBlock" HorizontalAlignment="Center" Margin="0,75,0,0" TextWrapping="Wrap" Text="About" VerticalAlignment="Top" FontSize="72" FontFamily="Old English Text MT"/>
+            <TextBlock x:Name="infoBlock" HorizontalAlignment="Center" Margin="0,25,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="371" Width="350" SelectionChanged="infoBlock_SelectionChanged"/>
+            <Button x:Name="BackButton" Content="Back" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.503,0.473" Height="70" Width="352" FontSize="48" FontFamily="Old English Text MT" Click="BackButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Page>

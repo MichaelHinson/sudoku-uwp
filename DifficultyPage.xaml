@@ -1,0 +1,37 @@
+﻿<Page
+    x:Class="SudokuApp.DifficultyPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SudokuApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Image Source="Assets/SudokuBackground3.jpg" Stretch="Fill">
+           <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="myPanel.Orientation"
+                                Value="Horizontal" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        </Image>
+        <StackPanel x:Name="difficultyPanel" Orientation="Vertical">
+            <RelativePanel HorizontalAlignment="Center">
+                <TextBlock x:Name="DifficultyTextBlock" HorizontalAlignment="Center" Margin="48,20,0,0" TextWrapping="Wrap" Text="Difficulty" VerticalAlignment="Top" FontSize="88" FontFamily="Old English Text MT"/>
+                <Button x:Name="EasyButton" Content="Easy" HorizontalAlignment="Center" Margin="36,165,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.503,0.473" Height="89" Width="359" FontSize="48" FontFamily="Old English Text MT" Click="EasyButton_Click"/>
+                <Button x:Name="MediumButton" Content="Medium" HorizontalAlignment="Center" Margin="36,280,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.503,0.473" Height="89" Width="359" FontSize="48" FontFamily="Old English Text MT" Click="MediumButton_Click"/>
+                <Button x:Name="HardButton" Content="Hard" HorizontalAlignment="Center" Margin="36,395,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.503,0.473" Height="89" Width="359" FontSize="48" FontFamily="Old English Text MT" Click="HardButton_Click"/>
+                <Button x:Name="BackButton" Content="Back" HorizontalAlignment="Center" Margin="10,520,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.503,0.473" Height="73" Width="415" FontSize="48" FontFamily="Old English Text MT" Click="BackButton_Click"/>
+            </RelativePanel>
+        </StackPanel>
+    </Grid>
+</Page>
