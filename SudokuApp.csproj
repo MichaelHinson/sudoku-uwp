@@ -98,6 +98,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Classes\Board.cs" />
+    <Compile Include="Classes\ButtonWithInfo.cs" />
+    <Compile Include="Classes\Cell.cs" />
+    <Compile Include="Classes\Score.cs" />
     <Compile Include="DifficultyPage.xaml.cs">
       <DependentUpon>DifficultyPage.xaml</DependentUpon>
     </Compile>

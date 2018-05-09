@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace SudokuApp
     {
 
         private string DificultySetting;
-        private String selectedNumber = " ";
+        private String selectedNumber = " "; //Used to determine what to input in a clicked cell
         DispatcherTimer dispatcherTimer;
         DateTimeOffset startTime;
         DateTimeOffset lastTime;
@@ -53,7 +54,6 @@ namespace SudokuApp
         public void generatePuzzle()
         {
             buttonWithInfoArray = new ButtonWithInfo[81];
-            //testOutput.Clear();
             buttonArray = new Button[]{
                  c1,  c2,  c3,    c4,  c5,  c6,   c7,  c8,  c9,
                 c10, c11, c12,   c13, c14, c15,  c16, c17, c18,
@@ -101,7 +101,7 @@ namespace SudokuApp
                 else if (i / 9 <= 8 && i % 9 <= 8)
                     buttonWithInfoArray[i].Square = 9;
             }
-            Board newBoard = new Board();
+            Board newBoard = new Board(true);//True fills the board completely
 
             for (int counter = 0; counter < 81; counter++)
             {
@@ -110,45 +110,46 @@ namespace SudokuApp
 
             if (DificultySetting == "easy")
             {
-                List<int> blankCells = Difficulty(40);
+                List<int> blankCells = Difficulty(40);//81-40 = 41
                 for (int item = 0; item < blankCells.Count; item++)
                 {
-                    buttonWithInfoArray[blankCells[item]].button.Content = " ";
-                    buttonWithInfoArray[blankCells[item]].button.FontWeight = FontWeights.Bold;
-                    buttonWithInfoArray[blankCells[item]].button.FontStyle = FontStyle.Italic;
-                    buttonWithInfoArray[blankCells[item]].Editable = true;
+                    FillBlankCells(blankCells);
                 } // Will leave 41 numbers visible.
 
             }
             else if (DificultySetting == "medium")
             {
-                List<int> blankCells = Difficulty(51);
+                List<int> blankCells = Difficulty(51);//81-51 = 30
                 for (int item = 0; item < blankCells.Count; item++)
                 {
-                    buttonWithInfoArray[blankCells[item]].button.Content = " ";
-                    buttonWithInfoArray[blankCells[item]].button.FontWeight = FontWeights.Bold;
-                    buttonWithInfoArray[blankCells[item]].button.FontStyle = FontStyle.Italic;
-                    buttonWithInfoArray[blankCells[item]].Editable = true;
+                    FillBlankCells(blankCells);
                 }// Will leave 30 numbers visible.
             }
             else if (DificultySetting == "hard")
             {
-                List<int> blankCells = Difficulty(56);
+                List<int> blankCells = Difficulty(56);//81-56 = 25
                 for (int item = 0; item < blankCells.Count; item++)
                 {
-                    buttonWithInfoArray[blankCells[item]].button.Content = " ";
-                    buttonWithInfoArray[blankCells[item]].button.FontWeight = FontWeights.Bold;
-                    buttonWithInfoArray[blankCells[item]].button.FontStyle = FontStyle.Italic;
-                    buttonWithInfoArray[blankCells[item]].Editable = true;
+                    FillBlankCells(blankCells);
                 }
                 // Will leave 25 numbers visible.
+            }
+        }
+        public void FillBlankCells(List<int> blankCells)
+        {
+            for (int item = 0; item < blankCells.Count; item++)
+            {
+                buttonWithInfoArray[blankCells[item]].button.Content = " ";
+                buttonWithInfoArray[blankCells[item]].button.FontWeight = FontWeights.Bold;
+                buttonWithInfoArray[blankCells[item]].button.FontStyle = FontStyle.Italic;
+                buttonWithInfoArray[blankCells[item]].Editable = true;
             }
         }
         public List<int> Difficulty(int blanks)
         {
             Random randNum = new Random();
             List<int> blankCells = new List<int>(); // To store the indexes of cells that will be blank.
-            for (int i = 1; i <= 9; i++)
+            for (int i = 1; i <= 9; i++)//This loop creates 3 blank cells in each 3x3 area to avoid completely filled squares
             {
                 int num;
                 for (int innerLoop = 0; innerLoop < 3; innerLoop++)
@@ -160,7 +161,7 @@ namespace SudokuApp
                     blankCells.Add(num);
                 }
             }
-            for (int count = 0; count < blanks - 27; count++)
+            for (int count = 0; count < blanks - 27; count++)//This loop randomly removes the remaining blanks required for the difficulty setting
             {
                 int num;
                 //bool oneCellLeftInSquare = false;
@@ -173,7 +174,7 @@ namespace SudokuApp
 
             return blankCells;
         }
-        public bool IsOneCellLeft(List<int> list, int square)
+        public bool IsOneCellLeft(List<int> list, int square)//Ensures that there will not be a completely empty 3x3 area
         {
             int count = 0;
             for (int i = 0; i < 81; i++)
@@ -193,270 +194,11 @@ namespace SudokuApp
             }
             return false;
         }
-        public class Board
-        {
-            public Cell[] CellArray { get; set; }//Creates array for cells
-            Random rand = new Random();//Creates a seeded random number
-            public Board()
-            {
-                CellArray = new Cell[81];//Establishes length of cell Array
-                for (int i = 0; i < CellArray.Length; i++)//Initializes all Cell's
-                {
-                    CellArray[i] = new Cell();
-                }
-                PopulateCellArray();
-                PopulateBoard();
-
-
-            }
-            public void PopulateCellArray()//Assigns index, row, column, and square info to each cell
-            {
-                for (int i = 0; i < 81; i++)
-                {
-                    CellArray[i].Index = i;
-                    CellArray[i].Row = i / 9 + 1;
-                    CellArray[i].Column = i % 9 + 1;
-                    //Top 3 Squares
-                    if (i / 9 <= 2 && i % 9 <= 2)
-                        CellArray[i].Square = 1;
-                    else if (i / 9 <= 2 && i % 9 <= 5)
-                        CellArray[i].Square = 2;
-                    else if (i / 9 <= 2 && i % 9 <= 8)
-                        CellArray[i].Square = 3;
-                    //Middle 3 Squares
-                    else if (i / 9 <= 5 && i % 9 <= 2)
-                        CellArray[i].Square = 4;
-                    else if (i / 9 <= 5 && i % 9 <= 5)
-                        CellArray[i].Square = 5;
-                    else if (i / 9 <= 5 && i % 9 <= 8)
-                        CellArray[i].Square = 6;
-                    //Bottom 3 Squares
-                    else if (i / 9 <= 8 && i % 9 <= 2)
-                        CellArray[i].Square = 7;
-                    else if (i / 9 <= 8 && i % 9 <= 5)
-                        CellArray[i].Square = 8;
-                    else if (i / 9 <= 8 && i % 9 <= 8)
-                        CellArray[i].Square = 9;
-                }
-            }
-            public void PopulateBoard()//Allocates numbers to each cell
-            {
-                for (int i = 0; i < 81; i++)
-                {
-                    FixConflict(i);
-                }
-            }
-            public void FixConflict(int i)//Uses recursion to backtrack if all available numbers fail
-            {
-                bool valid = false;//Prevents many checks
-                while (!valid)
-                {
-                    if (CellArray[i].AvailableValues.Count == 0)
-                    {
-                        CellArray[i].PopulateAvailableValues();
-                        CellArray[i].Value = 0;
-                        FixConflict(i - 1);
-                    }
-                    int randomNumber = RandomNumber(0, CellArray[i].AvailableValues.Count);//Gets a random number from 0 to highest index available
-                    CellArray[i].Value = CellArray[i].AvailableValues[randomNumber];//Uses random number for index for available numbers to assign value
-                    valid = Conflict(CellArray[i]);
-                    CellArray[i].AvailableValues.RemoveAt(randomNumber);
-                }
-
-            }
-            public bool Conflict(Cell cell)//Checks if all Check functions returned true or not
-            {
-                return (RowCheck(cell) && ColumnCheck(cell) && SquareCheck(cell));
-            }
-            public bool RowCheck(Cell cell)//Return true if no conflicts
-            {
-                for (int i = 0; i < CellArray.Length; i++)//Refer to Square Check
-                {
-                    if (CellArray[i].Row == cell.Row && i != cell.Index)
-                    {
-                        if (CellArray[i].Value == cell.Value)
-                        {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-            public bool ColumnCheck(Cell cell)//Return true if no conflicts
-            {
-                for (int i = 0; i < CellArray.Length; i++)//Refer to SquareCheck
-                {
-                    if (CellArray[i].Column == cell.Column && i != cell.Index)
-                    {
-                        if (CellArray[i].Value == cell.Value)
-                        {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-            public bool SquareCheck(Cell cell)//Return true if no conflicts
-            {
-                for (int i = 0; i < CellArray.Length; i++)
-                {
-                    if (CellArray[i].Square == cell.Square && i != cell.Index)//If the checking cell is in the same square and not at the same index(itself)
-                    {
-                        if (CellArray[i].Value == cell.Value)//If the checking cell contains the same value it is not valid
-                        {
-                            return false;
-                        }
-                    }
-                }
-                return true;//Nothing triggered it is a valid number
-            }
-            public int RandomNumber(int minValue, int maxValue)//Returns a random number between minValue and maxValue - 1
-            {
-                return rand.Next(minValue, maxValue);
-            }
-        }
-        public class Cell
-        {
-            public int Value { get; set; }//Stores the value that will show on the board
-            public int Square { get; set; }//Stores the 3x3 region the cell is located in
-            public List<int> AvailableValues { get; set; }//Stores the list of available values for the cell
-            public int Row { get; set; }//Stores the cell's row
-            public int Column { get; set; }//Stores the cell's Column
-            public int Index { get; set; }//Stores the cell's index in the CellArray
-
-            public Cell()
-            {
-                Value = 0;
-                Square = 0;
-                AvailableValues = new List<int>();
-                PopulateAvailableValues();
-                Row = 0;
-                Column = 0;
-                Index = 0;
-            }
-            public void PopulateAvailableValues()//Populates available values to contain 1-9
-            {
-                for (int i = 1; i < 10; i++)
-                {
-                    this.AvailableValues.Add(i);
-                }
-            }
-        }
-        public class ButtonWithInfo
-        {
-            public Button button;
-            public int Row;
-            public int Column;
-            public int Square;
-            public int Index;
-            public bool Editable;
-            public ButtonWithInfo()
-            {
-                button = null;
-                Row = 0;
-                Column = 0;
-                Square = 0;
-                Index = 0;
-                Editable = false;
-            }
-        }
-        public class CompletedBoard
-        {
-            public Cell[] CellArray { get; set; }//Creates array for cells
-            public CompletedBoard()
-            {
-                CellArray = new Cell[81];//Establishes length of cell Array
-                for (int i = 0; i < CellArray.Length; i++)//Initializes all Cell's
-                {
-                    CellArray[i] = new Cell();
-                }
-                PopulateCellArray();
-
-            }
-            public void PopulateCellArray()//Assigns index, row, column, and square info to each cell
-            {
-                for (int i = 0; i < 81; i++)
-                {
-                    CellArray[i].Index = i;
-                    CellArray[i].Row = i / 9 + 1;
-                    CellArray[i].Column = i % 9 + 1;
-                    //Top 3 Squares
-                    if (i / 9 <= 2 && i % 9 <= 2)
-                        CellArray[i].Square = 1;
-                    else if (i / 9 <= 2 && i % 9 <= 5)
-                        CellArray[i].Square = 2;
-                    else if (i / 9 <= 2 && i % 9 <= 8)
-                        CellArray[i].Square = 3;
-                    //Middle 3 Squares
-                    else if (i / 9 <= 5 && i % 9 <= 2)
-                        CellArray[i].Square = 4;
-                    else if (i / 9 <= 5 && i % 9 <= 5)
-                        CellArray[i].Square = 5;
-                    else if (i / 9 <= 5 && i % 9 <= 8)
-                        CellArray[i].Square = 6;
-                    //Bottom 3 Squares
-                    else if (i / 9 <= 8 && i % 9 <= 2)
-                        CellArray[i].Square = 7;
-                    else if (i / 9 <= 8 && i % 9 <= 5)
-                        CellArray[i].Square = 8;
-                    else if (i / 9 <= 8 && i % 9 <= 8)
-                        CellArray[i].Square = 9;
-                }
-            }
-
-
-            public bool Conflict(Cell cell)//Checks if all Check functions returned true or not
-            {
-                return (RowCheck(cell) && ColumnCheck(cell) && SquareCheck(cell));
-            }
-            public bool RowCheck(Cell cell)//Return true if no conflicts
-            {
-                for (int i = 0; i < CellArray.Length; i++)//Refer to Square Check
-                {
-                    if (CellArray[i].Row == cell.Row && i != cell.Index)
-                    {
-                        if (CellArray[i].Value == cell.Value)
-                        {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-            public bool ColumnCheck(Cell cell)//Return true if no conflicts
-            {
-                for (int i = 0; i < CellArray.Length; i++)//Refer to SquareCheck
-                {
-                    if (CellArray[i].Column == cell.Column && i != cell.Index)
-                    {
-                        if (CellArray[i].Value == cell.Value)
-                        {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-            public bool SquareCheck(Cell cell)//Return true if no conflicts
-            {
-                for (int i = 0; i < CellArray.Length; i++)
-                {
-                    if (CellArray[i].Square == cell.Square && i != cell.Index)//If the checking cell is in the same square and not at the same index(itself)
-                    {
-                        if (CellArray[i].Value == cell.Value)//If the checking cell contains the same value it is not valid
-                        {
-                            return false;
-                        }
-                    }
-                }
-                return true;//Nothing triggered it is a valid number
-            }
-        }
         public bool Conflict(int currentIndex)//Checks if all Check functions returned true or not
         {
-            return (RowCheck2(currentIndex) && ColumnCheck2(currentIndex) && SquareCheck2(currentIndex));
+            return (RowCheck(currentIndex) && ColumnCheck(currentIndex) && SquareCheck(currentIndex));
         }
-        public bool RowCheck2(int currentIndex)//Return true if no conflicts
+        public bool RowCheck(int currentIndex)//Return true if no conflicts
         {
             for (int i = 0; i < buttonWithInfoArray.Length; i++)//Refer to Square Check
             {
@@ -473,7 +215,7 @@ namespace SudokuApp
             }
             return true;
         }
-        public bool ColumnCheck2(int currentIndex)//Return true if no conflicts
+        public bool ColumnCheck(int currentIndex)//Return true if no conflicts
         {
             for (int i = 0; i < buttonWithInfoArray.Length; i++)//Refer to Square Check
             {
@@ -490,7 +232,7 @@ namespace SudokuApp
             }
             return true;
         }
-        public bool SquareCheck2(int currentIndex)//Return true if no conflicts
+        public bool SquareCheck(int currentIndex)//Return true if no conflicts
         {
             for (int i = 0; i < buttonWithInfoArray.Length; i++)//Refer to Square Check
             {
@@ -518,12 +260,12 @@ namespace SudokuApp
         }
         private void c_Button_Click(object sender, RoutedEventArgs e)
         {
-            int index = 0;
-            //Removes Highlighting
+            int index = 0;//Will be used to determine the location of the clicked button
             for (int i = 0; i < buttonWithInfoArray.Length; i++)
             {
-                if (buttonWithInfoArray[i].button == (sender as Button))
+                if (buttonWithInfoArray[i].button == (sender as Button))//Determines which button was clicked on the board
                     index = i;
+                //Resets all squares to original color
                 if (buttonWithInfoArray[i].Square == 2 || buttonWithInfoArray[i].Square == 4 ||
                     buttonWithInfoArray[i].Square == 6 || buttonWithInfoArray[i].Square == 8)
                     buttonWithInfoArray[i].button.Background = null;
@@ -537,39 +279,42 @@ namespace SudokuApp
             }
             else
             {
-                //Sets value to a selected number
-                if (buttonWithInfoArray[index].Editable && selectedNumber != " ")
+                if (buttonWithInfoArray[index].Editable && selectedNumber != " ")//Sets value to a selected number
                     (sender as Button).Content = selectedNumber;
 
-                //Highlights relevant row square and column
-                for (int i = 0; i < buttonWithInfoArray.Length; i++)
-                {
-                    if (buttonWithInfoArray[i].Row == buttonWithInfoArray[index].Row)//Highlights related row
-                    {
-                        if (selectedNumber != " " && buttonWithInfoArray[index].button.Content == buttonWithInfoArray[i].button.Content && i != index && hintToggle.IsOn)
-                            buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["RedColor"];
-                        else
-                            buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["BlueColor"];
-                    }
-                    if (buttonWithInfoArray[i].Column == buttonWithInfoArray[index].Column)//Highlights related column
-                    {
-                        if (selectedNumber != " " && buttonWithInfoArray[index].button.Content == buttonWithInfoArray[i].button.Content && i != index && hintToggle.IsOn)
-                            buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["RedColor"];
-                        else
-                            buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["BlueColor"];
-                    }
-                    if (buttonWithInfoArray[i].Square == buttonWithInfoArray[index].Square)//Highlights related square(9x9 area)
-                    {
-                        if (selectedNumber != " " && buttonWithInfoArray[index].button.Content == buttonWithInfoArray[i].button.Content && i != index && hintToggle.IsOn)
-                            buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["RedColor"];
-                        else
-                            buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["BlueColor"];
-                    }
-                }
             }
+            HighlightSquares(index);
             (sender as Button).Background = (SolidColorBrush)Resources["GreenColor"];
             if (selectedNumber != " " && !Conflict(index) && hintToggle.IsOn)
                 buttonWithInfoArray[index].button.Background = (SolidColorBrush)Resources["RedColor"];
+
+        }
+        public void HighlightSquares(int index)//Highlights relevant row square and column
+        {
+            for (int i = 0; i < buttonWithInfoArray.Length; i++)
+            {
+                if (buttonWithInfoArray[i].Row == buttonWithInfoArray[index].Row)//Highlights related row
+                {
+                    if (hintToggle.IsOn && selectedNumber != " " && buttonWithInfoArray[index].button.Content.ToString() == buttonWithInfoArray[i].button.Content.ToString() && i != index)
+                        buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["RedColor"];
+                    else
+                        buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["BlueColor"];
+                }
+                if (buttonWithInfoArray[i].Column == buttonWithInfoArray[index].Column)//Highlights related column
+                {
+                    if (hintToggle.IsOn && selectedNumber != " " && buttonWithInfoArray[index].button.Content.ToString() == buttonWithInfoArray[i].button.Content.ToString() && i != index)
+                        buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["RedColor"];
+                    else
+                        buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["BlueColor"];
+                }
+                if (buttonWithInfoArray[i].Square == buttonWithInfoArray[index].Square)//Highlights related square(9x9 area)
+                {
+                    if (hintToggle.IsOn && selectedNumber != " " && buttonWithInfoArray[index].button.Content.ToString() == buttonWithInfoArray[i].button.Content.ToString() && i != index)
+                        buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["RedColor"];
+                    else
+                        buttonWithInfoArray[i].button.Background = (SolidColorBrush)Resources["BlueColor"];
+                }
+            }
         }
         private void eraseToggle_Toggled(object sender, RoutedEventArgs e)
         {
@@ -577,26 +322,20 @@ namespace SudokuApp
         }
         private void Button_Click(object sender, RoutedEventArgs e) // Submits the user's solution for validation - Displays "Winner" as the button's content value.
         {
-            CompletedBoard final = new CompletedBoard();            // A modified version of Board
+            Board submittedBoard = new Board();         
             bool valid = true;
-            Button[] buttonArray =   {
-                                        c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20,
-                                        c21, c22, c23, c24, c25, c26, c27, c28, c29, c30, c31, c32, c33, c34, c35, c36, c37, c38, c39,
-                                        c40, c41, c42, c43, c44, c45, c46, c47, c48, c49, c50, c51, c52, c53, c54, c55, c56, c57, c58,
-                                        c59, c60, c61, c62, c63, c64, c65, c66, c67, c68, c69, c70, c71, c72, c73, c74, c75, c76, c77,
-                                        c78, c79, c80, c81
-                                      };
-            for (int count = 0; count < buttonArray.Length; count++) // This loop assigns the button's text value to the new
-            {                                                        // CellArray[count], and uses the Conflict method to test validity. 
-                if ((string)buttonArray[count].Content == (" "))     // If the cell's text value is blank, we insert a 0 to ensure
-                {                                                    // valid is set to false.
-                    buttonArray[count].Content = "0";
-                }
-                final.CellArray[count].Value = Convert.ToInt32(buttonArray[count].Content);
-                valid = final.Conflict(final.CellArray[count]);
+            for (int count = 0; count < buttonWithInfoArray.Length; count++)// This loop assigns the button's text value to the new board
+            {
+                if (buttonWithInfoArray[count].button.Content.ToString() == " ")
+                    submittedBoard.CellArray[count].Value = 0;
+                else
+                    submittedBoard.CellArray[count].Value = int.Parse(buttonWithInfoArray[count].button.Content.ToString());
+            }
+            for (int count = 0; count < buttonWithInfoArray.Length; count++) //Utilizes the Conflict method to check for errors on the submitted board
+            {                                                        
+                valid = submittedBoard.Conflict(submittedBoard.CellArray[count]);
                 if (!valid)
                 {
-                    buttonArray[count].Content = " ";
                     count = 80;
                 }
             }
@@ -606,25 +345,21 @@ namespace SudokuApp
                 ___SubmitButton_.Content = "Winner";
                 if (min == 0 && sec == 0)
                 {
-                    //dispatcherTimer.Stop();
                     var score = new Score { Points = 0, Visible = true, Min = min, Sec = sec };
                     this.Frame.Navigate(typeof(ScorePage), score);
                 }
                 else if(DificultySetting == "easy")
                 {
-                    //dispatcherTimer.Stop();
                     var score = new Score { Points = ((min * 100) + sec) * 2, Visible = true, Min = min, Sec = sec};
                     this.Frame.Navigate(typeof(ScorePage), score);
                 }
                 else if (DificultySetting == "medium")
                 {
-                    //dispatcherTimer.Stop();
                     var score = new Score { Points = ((min * 100) + sec) * 3, Visible = true, Min = min, Sec = sec };
                     this.Frame.Navigate(typeof(ScorePage), score);
                 }
                 else if (DificultySetting == "hard")
                 {
-                    //dispatcherTimer.Stop();
                     var score = new Score { Points = ((min * 100) + sec) * 4, Visible = true, Min = min, Sec = sec };
                     this.Frame.Navigate(typeof(ScorePage), score);
                 }
@@ -679,12 +414,5 @@ namespace SudokuApp
         private void Timer_TextChanged(object sender, TextChangedEventArgs e)
         {   }
     }
-    class Score
-    {
-        public int Points { get; set; }
-        public int Min { get; set; }
-        public int Sec { get; set; }
-        public bool Visible { get; set; }
 
-    }
 }
